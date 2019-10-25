@@ -1,7 +1,7 @@
 ---
-title: "Untitled"
-author: "STA303 In Class"
-date: '2019-10-25'
+title: "SSU R Workshop, University of Toronto"
+author: "Alex Stringer"
+date: '2019-11-21'
 output: html_document
 ---
 
@@ -341,8 +341,19 @@ faithful %>%
   ggplot(aes(y = waiting)) +
   theme_classic() +
   geom_boxplot(width = 1) +
-  coord_cartesian(xlim = c(-3,3)) +
-  theme(axis.text.x = element_blank(),axis.ticks.x = element_blank()) +
+  coord_cartesian(xlim = c(-3,3)) + # Annoying way to set the width of the boxplot
+  theme(axis.text.x = element_blank(),axis.ticks.x = element_blank()) + # Remove garbage on the x-axis
   labs(title = "Distribution of waiting times until eruption, Old Faithful Geyser",
        x = "",y = "Waiting Time")
 ```
+
+**Exercise**: there's some confusing, unexplained parts of the above code. Are they
+important? Reading other people's code is a hard but important skill. Try building
+up my plot layer-by-layer and see what each line does. What do the following elements
+in particular do?
+
+- `width = 1`
+- `coord_cartesian(xlim = c(-3,3))`
+- `theme(axis.text.x = element_blank(),axis.ticks.x = element_blank())`
+
+**Exercise**: create a boxplot of `eruption`.
