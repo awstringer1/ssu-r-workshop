@@ -1,0 +1,348 @@
+---
+title: "Untitled"
+author: "STA303 In Class"
+date: '2019-10-25'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this tutorial we will learn how to use `R` for basic data anlaysis. We are
+going to 
+
+1. Do some basic scientific computing in `R`.
+1. Do some basic data analysis in `R`.
+1. Export the results as a document using `RMarkdown`.
+
+We will see examples of concepts and then you will complete short exercises on
+your own.
+
+You must download the `tidyverse` before starting. Type `install.packages("tidyverse")`
+and wait a while. Then type
+
+```{r tidyverse-1}
+library(tidyverse)
+```
+
+to load the package so you can use its functions.
+
+# Scientific Computing
+
+Scientific computing refers to the use of a computer to do complicated calculations.
+This is useful to you for your studies and also is a good way to get introduced 
+to `R`.
+
+As a motivating example, we are going to compute the $2^{nd}$-order Taylor expansion
+of a simple trigonometric function. This will introduce you to the following
+concepts:
+
+1. Variables and assignment,
+1. functions, and
+1. plots
+
+## Problem Setup
+
+Recall from calclus that a sufficiently smooth function $f(x)$ can be written
+as a power series:
+\begin{equation}
+f(x) = \sum_{k=0}^{\infty}\frac{f^{(k)}(x_{0})(x - x_{0})^{k}}{k!}
+\end{equation}
+where $x_{0}$ is a reference point and $f^{(k)}$ is the $k^{th}$ derivative
+of $f$. This representation is exact when the sum is infinite.
+
+However, you can truncate the sum at some finite $N$ to get a polynomial approximation
+to $f$, called a *Taylor series approximation*. It is common to take $N = 1$ or $2$, to get a *linear* or *quadratic*
+approximation. These are used all the time in applied science, and extensively
+in statistics.
+
+For our purposes, let's take $f(x) = \cos(x)$ and $x_{0} = 0$. Its derivatives are
+\begin{equation}\begin{aligned}
+f^{(1)}(x) &= -\sin(x) \\
+f^{(2)}(x) &= -\cos(x) \\
+\end{aligned}\end{equation}
+
+How can we use `R` to compute the Taylor series approximation to $\cos(x)$? We need to
+
+1. Tell `R` about the initial point $x_{0}$,
+1. tell `R` about $f(x)$ and its first two derivatives,
+1. tell `R` how to compute the value of the approximation for any $x$, and
+1. produce a graphic showing the function and its approximation.
+
+## Variables and assignment
+
+### Basic concepts
+
+To tell `R` about the initial point $x_{0} = 0$, we create a **variable** called
+$x_{0}$ and **assign** the value $0$ to it. We can do this as follows:
+
+```{r var-1}
+# Create a variable simply by assigning it a value
+x0 <- 0
+```
+
+This code uses the **assignment operatior** `<-` to create a **variable** `x0` and **assign** it value `0`. 
+
+You can check that your variable was defined either by listing all the variables
+currently defined:
+
+```{r var-2}
+ls()
+```
+
+or by specifically checking if the variable `x0` exists:
+
+```{r var-3}
+exists("x0")
+```
+
+or by typing the name of your variable and seeing what prints out:
+
+```{r var-6}
+x0
+```
+
+This last way also tells you the *value* of the variable.
+
+**Exercise**: create a variable called `y` which takes the value $2$. Check that
+it exists.
+
+### Vectors
+
+So what if you had more than one number you wanted to store? You could create
+more than one variable, like `y1 <- 1; y2 <- 2`, but this becomes cumbersome
+quickly. Instead, you can store many numbers in a *single variable*, by using
+a **vector**. The `c()` (for "concatenate") function in `R` is used for this:
+
+```{r var-4}
+y1 <- c(1,2,3,4,5) # Create a vector 
+y1 # See what it looks like
+y1[1]
+y1[2] # Access individual elements
+y1[3:5] # Access a subset of elements
+length(y1) # How many elements?
+```
+
+You can also assign values to existing variables:
+
+```{r var-5}
+y1 # Old value
+y1 <- c(6,7,8) # Completely new value
+y1
+y1[2] <- 10 # Can assign to a subset
+y1
+```
+
+**Exercise**: create a vector containing the values `1:10`. Change the fifth 
+element to `20`. Print it out and make sure it's correct.
+
+## Functions
+
+Now that you can store numbers in `R`, you want to be able to do things to those
+numbers. You do this using **functions**.
+
+Functions are actually themselves "values" that you assign to variables, in the
+same way as numbers and vectors. And to create a function, you use the `function()`
+function. Confused? Check it out:
+
+```{r fun-1}
+# Create a function to multiply a number by 2:
+multiply_by_2 <- function(x) {
+  x * 2
+}
+# Call your function:
+multiply_by_2(2)
+# Call your function on a pre-defined variable:
+multiply_by_2(x0)
+# Many operations also work on vectors:
+multiply_by_2(y1)
+```
+
+That's it! There are a few things to note:
+
+1. Functions take zero or more **arguments**. Here there is one argument called
+`x`. You can add more arguments or have no arguments. Arguments can be any type
+of `R` object, and unlike other programming languages you don't have to pre-specify
+what they are.
+
+1. Functions may or may not return a value. If the last statement in a function
+is an expression like `x * 2`, then the function returns that value. You can 
+also use `return()` to return a value.
+
+1. Functions can call other functions. In this example, `*` is itself a function!
+
+Let's create functions to represent $f(x)$ and its first two derivatives:
+
+```{r fun-2}
+f <- function(x) cos(x)
+f1 <- function(x) -sin(x)
+f2 <- function(x) -cos(x)
+f(c(-pi/2,0,pi/2)) # pi is a variable provided by R
+f1(c(-pi/2,0,pi/2))
+f2(c(-pi/2,0,pi/2))
+```
+
+**Exercise**: create a function that adds `2` to a number.
+
+**Exercise**: create a function $g(x)$ that computes the tangent of an angle,
+$\tan(x) = \sin(x)/\cos(x)$. What happens if you call $g(\pi/2)$?
+
+## Putting it together: the Taylor expansion of $\sin(x)$
+
+Now let's use our new knowledge of functions and vectors to compute the
+Taylor expansion of $f(x) = \cos(x)$ to second order.
+
+```{r taylor-1}
+# Create a function that computes the Taylor expansion of f(x) at point x0
+taylorfunction <- function(x) {
+  f(x0) + f1(x0) * (x - x0) + (1/2)*f2(x0) * (x - x0)^2
+}
+# Try it out
+f(0)
+taylorfunction(0)
+f(0.5)
+taylorfunction(0.5)
+# and so on
+```
+
+**Exercise**: $f^{(3)}(x) = -cos(x)$. Can you add a third order of approximation
+to the above? Create a new function `taylorfunction3rd` that approximates $f(x)$
+to third-order, and compare its values at $x = -.5,0,.5$ to $f(x)$ and `taylorfunction`.
+
+## Creating graphics
+
+We should assess our approximation visually. To do this we will use `ggplot2` to
+plot $f(x)$ and its approximation.
+
+`ggplot2` is a layer-based graphics system. It's best to just learn it by trial-and-error,
+by seeing dozens or hundreds of examples and eventually figuring out how to search
+for what you want to do. That's how I learned it anyways. But I'll try and explain.
+
+You build up a plot in layers. First you add data; then you map variables to aesthetic
+elements of the plot like the "x-axis" or the "colour"; then you tell it what to
+draw (points, lines, bars, etc); then you annotate the plot with axis labels and 
+other things. It looks like this:
+
+```{r gg-1}
+# First, start by saving a blank plot to a variable:
+plt <- tibble(x = c(-5,5)) %>% # Give (-5,5) as the data; this tells ggplot where to draw the function to and from
+  ggplot(aes(x = x)) # aes(): tell ggplot that the variable "x" goes on the x-axis.
+# What does this look like?
+plt
+# Not much. Add a blank theme:
+plt <- plt + theme_classic()
+plt
+# Now add a line for the true function f(x)
+plt <- plt + geom_line(stat = "function",fun = f) # stat = "function" tells geom_line() to draw a function
+plt
+# Now add a line for the Taylor approximation
+plt <- plt + geom_line(stat = "function",fun = taylorfunction,colour = "blue",linetype = "dotdash")
+plt
+# Finally, add some axis labels and a title
+plt <- plt + labs(title = "Taylor approximation (blue) to f(x) = cos(x) (black) about x0 = 0",
+                  x = "x",y = "f(x) and approximation")
+plt
+```
+
+You don't have to do everything step-by-step like that in practice. You can do
+it all at once:
+
+```{r gg-2}
+tibble(x = c(-5,5)) %>%
+  ggplot(aes(x = x)) +
+  theme_classic() +
+  geom_line(stat = "function",fun = f) +
+  geom_line(stat = "function",fun = taylorfunction,colour = "blue",linetype = "dotdash") +
+  labs(title = "Taylor approximation (blue) to f(x) = cos(x) (black) about x0 = 0",
+                  x = "x",y = "f(x) and approximation") +
+  coord_cartesian(ylim = c(-1,1))
+```
+
+Notice how I set the y-limits of the plot to better capture the range I wanted to see.
+
+**Exercise**: add your `taylor3rdorder` function to the above plot. Change the colour
+to `"red"` or your favourite alternative.
+
+# Data Anlaysis
+
+`R` is a programming language that is optimized for interactive data analysis.
+In this section of the tutorial we are going to analyze data using `R`.
+
+We are going to analyze the "Old Faithful" Geyser data, a famous dataset on
+eruption times from a famous geyser in Yellowstone National Park in Wyoming.
+The data is actually available in `R` but for illustration purposes I saved
+it to a text file which you can get directly from my github.
+
+## Read in the data
+
+The data is in "comma-separated value" format,
+which means it's a text file where variables are separated by commas. Look at
+the raw data [here](https://raw.githubusercontent.com/awstringer1/ssu-r-workshop/master/data/faithful.txt).
+
+Here is how you read in the data.
+
+```{r faithful-1}
+faithful <- readr::read_csv(
+  file = "https://raw.githubusercontent.com/awstringer1/ssu-r-workshop/master/data/faithful.txt",
+  col_names = TRUE,
+  col_types = c("nn")
+)
+# Take a look at it:
+glimpse(faithful)
+```
+
+The data has two variables, `eruptions` and `waiting`, and 272 rows.
+
+## Summary Statistics
+
+We can use `R` to analyze the data. Let's look at some basic summary statistics:
+mean, median, min/max and quantiles. You get the mean of a vector of numbers in
+`R` using the `mean()` function. You access one column of a dataframe by using
+the `$` operator. We do this as follows:
+
+```{r faithful-2}
+mean(faithful$eruptions)
+mean(faithful$waiting)
+```
+
+It looks like the mean waiting time is `r mean(faithful$waiting)` and the mean number of 
+eruptions is `r mean(faithful$eruptions)`.
+
+You can get a five-number summary using the `summary()` function:
+
+```{r faithful-3}
+summary(faithful$eruptions)
+```
+
+**Exercise**: compute the five-number summary for the `waiting` variable.
+
+## Plots
+
+We can also plot the data, just like we plotted our functions. We'll use `ggplot`
+to make a scatterplot. The premise is the same: build the plot up in layers.
+
+```{r faithful-4}
+faithful %>% # Provide the data to ggplot() directly
+  ggplot(aes(x = waiting,y = eruptions)) + # Tell ggplot to put waiting on the x-axis and eruptions on the y-axis
+  theme_classic() +
+  geom_point(pch = 21,colour = "black",fill = "orange")
+```
+
+**Exercise**: add a title and x/y axis labels to this plot. Remember the `labs()` function
+from the Taylor series example?
+
+We can also look at the individual variables' distributions. A common type of plot
+for this is a **boxplot** which essentially plots the five-number summary of a variable.
+We can make this in `ggplot` as follows:
+
+```{r faithful-5}
+faithful %>%
+  ggplot(aes(y = waiting)) +
+  theme_classic() +
+  geom_boxplot(width = 1) +
+  coord_cartesian(xlim = c(-3,3)) +
+  theme(axis.text.x = element_blank(),axis.ticks.x = element_blank()) +
+  labs(title = "Distribution of waiting times until eruption, Old Faithful Geyser",
+       x = "",y = "Waiting Time")
+```
