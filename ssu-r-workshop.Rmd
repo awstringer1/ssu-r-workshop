@@ -19,10 +19,14 @@ going to
 We will see examples of concepts and then you will complete short exercises on
 your own.
 
+To run any of the code in this document, highlight the part you want to run 
+and press `Cmd+Enter` (mac) or `Ctrl+Enter` (windows). I am assuming you are using 
+RStudio.
+
 You must download the `tidyverse` before starting. Type `install.packages("tidyverse")`
 and wait a while. Then type
 
-```{r tidyverse-1}
+```{r tidyverse-1,message=FALSE,warning=FALSE}
 library(tidyverse)
 ```
 
