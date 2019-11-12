@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In this tutorial we will learn how to use `R` for basic data anlaysis. We are
+In this tutorial we will learn how to use `R` and `RStudio` for basic data analysis. We are
 going to 
 
 1. Do some basic scientific computing in `R`.
@@ -19,9 +19,19 @@ going to
 We will see examples of concepts and then you will complete short exercises on
 your own.
 
+First, let's get comfortable with `RStudio`. `R` is the underlying programming
+language, where you type code and it does computations for you. `RStudio` is an
+**Integrated Development Environment** (IDE), which is a program that makes it
+easier for you to program in `R`. It lets you type code and run it, manage your
+data, publish documents, and a whole lot else. Let's take a moment to get familiar
+with it...
+
 To run any of the code in this document, highlight the part you want to run 
-and press `Cmd+Enter` (mac) or `Ctrl+Enter` (windows). I am assuming you are using 
-RStudio.
+and press `Cmd+Enter` (mac) or `Ctrl+Enter` (windows). You can also click the
+"Play" button (little sideways triangle) at the top right corner of each "chunk"
+(grey box) of code. I would recommend getting out of the habit of using the mouse,
+and getting in to the habit of using the keyboard, to make your workflow faster
+and more fluid.
 
 You must download the `tidyverse` before starting. Type `install.packages("tidyverse")`
 and wait a while. Then type
@@ -30,7 +40,16 @@ and wait a while. Then type
 library(tidyverse)
 ```
 
-to load the package so you can use its functions.
+to load the package so you can use its functions. A package is like a little magic
+box containing functions and data. Other people (like me!) create `R` packages
+that contain code that they have written, and they host them on the internet
+in a common repository. Users (like you!) can then easily download the package
+and run the code. Packages have **documentation** that tell you what's in them
+and how to use it. Google "tidyverse documentation" to see what I mean.
+
+I **always** load the `tidyverse` package, which is a special package that loads
+a bunch of other useful packages. I will proceed assuming you've done this, and 
+you shouldn't worry too much about it when you're just getting started.
 
 # Scientific Computing
 
@@ -88,11 +107,15 @@ x0 <- 0
 
 This code uses the **assignment operatior** `<-` to create a **variable** `x0` and **assign** it value `0`. 
 
+The text next to the \# sign is called a *comment*. You can use the \# to put helpful
+text inside your program, so other users (including future you!) know what your
+program is doing. This is a fundamentally important practice.
+
 You can check that your variable was defined either by listing all the variables
 currently defined:
 
 ```{r var-2}
-ls()
+ls() # ls == "list"
 ```
 
 or by specifically checking if the variable `x0` exists:
@@ -265,6 +288,21 @@ tibble(x = c(-5,5)) %>%
 
 Notice how I set the y-limits of the plot to better capture the range I wanted to see.
 
+There's a couple confusing bits in this code:
+
+1. A `tibble` is a type of object that stores data. You'll see this again in the
+data analysis section of this workshop.
+
+1. The `%>%` operator is called the "pipe". It takes whatever is on its left side,
+and "pipes" it in as the first argument to the function on its right side. So
+`f(x)` is the same as `x %>% f()`. It is a very common and useful part of `R`
+programming.
+
+1. The `+` sign is being used in a weird way here. Usually you would type `x + y`
+to add together the *numbers* `x` and `y`. `ggplot2` uses the `+` sign to add together
+*parts of the plot*. You can just do this without thinking too much about it, but
+it's weird when you first see it I think.
+
 **Exercise**: add your `taylor3rdorder` function to the above plot. Change the colour
 to `"red"` or your favourite alternative.
 
@@ -287,7 +325,8 @@ the raw data [here](https://raw.githubusercontent.com/awstringer1/ssu-r-workshop
 Here is how you read in the data.
 
 ```{r faithful-1}
-faithful <- readr::read_csv(
+# The "readr" package is used to read in data.
+faithful <- read_csv(
   file = "https://raw.githubusercontent.com/awstringer1/ssu-r-workshop/master/data/faithful.txt",
   col_names = TRUE,
   col_types = c("nn")
