@@ -11,7 +11,7 @@ You must bring a computer with RStudio installed to the workshop. Specifically, 
 
 1. Install the `tidyverse` package. Open RStudio and type `install.packages("tidyverse")` in the interactive console and press `Enter`. This will take a few minutes to run.
 
-1. Download the `ssu-r-workshop.Rmd` file from this page. Open it in RStudio. Be prepared to follow along during the workshop.
+1. Download the `ssu-r-workshop.Rmd` file from [this page](https://raw.githubusercontent.com/awstringer1/ssu-r-workshop/master/ssu-r-workshop.Rmd). Open it in RStudio. Be prepared to follow along during the workshop.
 
 If you have trouble with these steps, ask your friends and/or Google any errors you get. You will be completing exercises in class during this workshop and you must come prepared.
 
