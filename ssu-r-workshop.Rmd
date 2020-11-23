@@ -178,6 +178,7 @@ function. Confused? Check it out:
 multiply_by_2 <- function(x) {
   x * 2
 }
+# multiply_by_2 <- function(x) x*2
 
 # Call your function:
 multiply_by_2(2)
@@ -213,6 +214,12 @@ f2(c(-pi/2,0,pi/2))
 
 **Exercise**: create a function that adds `2` to a number.
 
+```{r ex1}
+function_that_adds_2 <- function(x) {
+  x + 2
+}
+```
+
 **Exercise**: create a function $g(x)$ that computes the tangent of an angle,
 $\tan(x) = \sin(x)/\cos(x)$. What happens if you call $g(\pi/2)$?
 
@@ -243,6 +250,8 @@ taylorfunction <- function(x) {
 # Try it out
 f(0)
 taylorfunction(0)
+f(x0)
+taylorfunction(x0)
 f(0.5)
 taylorfunction(0.5)
 # and so on
@@ -253,8 +262,22 @@ to the above, and can you change the centre of the approximation from $x_{0} = 0
 $x_{0} = \pi/2$? Create a new function `taylorfunction3rd` that approximates $f(x)$
 to third-order about the point $x_{0} = \pi/2$. Formula:
 \begin{equation}
-f(x_{0}) + f^{(1)}(x_{0})(x - x_{0}) + \frac{1}{2}f^{(2)}(x_{0})(x - x_{0})^{2} + \frac{1}{3}f^{(3)}(x_{0})(x - x_{0})^{3}
+f(x_{0}) + f^{(1)}(x_{0})(x - x_{0}) + \frac{1}{2}f^{(2)}(x_{0})(x - x_{0})^{2} + \frac{1}{6}f^{(3)}(x_{0})(x - x_{0})^{3}
 \end{equation}
+
+```{r ex2}
+# Third order Taylor approx
+f3 <- function(x) sin(x)
+x0 <- pi/2
+taylorfunction3rd <- function(x) {
+  f(x0) + f1(x0) * (x - x0) + (1/2)*f2(x0) * (x - x0)^2 + (1/6)*f3(x0) * (x - x0)^3
+}
+
+taylorfunction3rd(x0)
+f(x0)
+taylorfunction3rd(1)
+f(1)
+```
 
 ## Creating graphics
 
@@ -284,6 +307,9 @@ plt
 # Not much. Add a blank theme:
 plt <- plt + theme_classic()
 plt
+plt <- plt + theme_bw()
+plt
+
 # Now add a line for the true function f(x)
 plt <- plt + geom_line(stat = "function",fun = f) # stat = "function" tells geom_line() to draw a function
 plt
@@ -302,7 +328,7 @@ it all at once:
 ```{r gg-2}
 tibble(x = c(-5,5)) %>%
   ggplot(aes(x = x)) +
-  theme_classic() +
+  theme_bw() +
   geom_line(stat = "function",fun = f) +
   geom_line(stat = "function",fun = taylorfunction,colour = "blue",linetype = "dotdash") +
   labs(title = "Taylor approximation (blue) to f(x) = cos(x) (black) about x0 = 0",
@@ -321,6 +347,14 @@ data analysis section of this workshop.
 and "pipes" it in as the first argument to the function on its right side. So
 `f(x)` is the same as `x %>% f()`. It is a very common and useful part of `R`
 programming.
+
+```{r pipe1}
+f(x0)
+x0 %>% f()
+# More complicated?
+f(f1(f2(f3(x0))))
+x0 %>% f3() %>% f2() %>% f1 %>% f()
+```
 
 1. The `+` sign is being used in a weird way here. Usually you would type `x + y`
 to add together the *numbers* `x` and `y`. `ggplot2` uses the `+` sign to add together
@@ -410,8 +444,16 @@ to make a scatterplot. The premise is the same as in the Scientific Computing se
 ```{r faithful-4}
 faithful %>% # Provide the data to ggplot() directly
   ggplot(aes(x = waiting,y = eruptions)) + # Tell ggplot to put waiting on the x-axis and eruptions on the y-axis
-  theme_classic() +
-  geom_point(pch = 21,colour = "black",fill = "orange")
+  theme_bw() +
+  geom_point(pch = 21,colour = "black",fill = "orange") +
+  labs(
+    title = "Eruptions vs Waiting Time",
+    subtitle = "Old Faithful Geyser",
+    x = "Waiting",
+    y = "Eruptions"
+  ) +
+  scale_x_continuous(breaks = seq(40,100,by = 5)) +
+  scale_y_continuous(breaks = seq(1,5,by = .5))
 ```
 
 Let's pause and take a deeper look at one of the features of `R` that we are using here: the **pipe**, `%>%`. The pipe is provided by the `tidyverse` package (inb4: it actually lives inside the `magrittr` package which is loaded by `dplyr` which is loaded by `tidyverse`...). The pipe lets you write clean code. The pipe works by taking its
